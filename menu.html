@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Passage - Fine Dining Menu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --paper-color: #1a1a1a;
+            --text-gold: #d4af37;
+            --text-cream: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#2a2a2a 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-cream);
+            font-family: 'Cormorant Garamond', serif;
+            margin: 0;
+            padding: 40px;
+            padding-bottom: 100px; /* Extra space for floating legend */
+            line-height: 1.6;
+        }
+
+        .menu-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            padding: 60px;
+            border: 1px solid var(--text-gold);
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        /* Decorative Borders */
+        .menu-container::before {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid #4a4a4a;
+            pointer-events: none;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--text-gold);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 3rem;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--text-gold);
+            padding-bottom: 20px;
+            display: inline-block;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .disclaimer {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            page-break-after: avoid;
+        }
+
+        h2::before, h2::after {
+            content: '';
+            height: 1px;
+            background-color: var(--text-gold);
+            flex-grow: 1;
+            margin: 0 20px;
+            opacity: 0.5;
+        }
+
+        /* Grid Layout */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .menu-item {
+            margin-bottom: 25px;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+
+        .item-name {
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-cream);
+        }
+
+        .item-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .sub-header {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-gold);
+        }
+
+        /* Allergy Icons */
+        .icon-key {
+            display: inline-block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.6rem;
+            width: 22px;
+            height: 22px;
+            line-height: 20px;
+            text-align: center;
+            border: 1px solid var(--text-gold);
+            border-radius: 50%;
+            color: var(--text-gold);
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        /* Static Legend (Bottom of PDF) */
+        .allergen-legend {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            page-break-inside: avoid;
+        }
+
+        .legend-item {
+            display: inline-block;
+            margin: 0 10px;
+        }
+
+        /* --- FLOATING LEGEND STYLES --- */
+        .floating-legend-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(26, 26, 26, 0.95); /* Semi-transparent dark */
+            border: 1px solid var(--text-gold);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            z-index: 1000;
+            width: 90%;
+            max-width: 900px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .floating-item {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-cream);
+            white-space: nowrap;
+        }
+
+        .floating-item .icon-key {
+            margin-right: 5px;
+            margin-left: 0;
+            border-color: var(--text-gold);
+            color: var(--text-gold);
+        }
+
+        /* Print Specifics */
+        @media print {
+            body {
+                background-color: #1a1a1a; 
+                margin: 0;
+                padding: 0;
+            }
+            .menu-container {
+                box-shadow: none;
+                border: none;
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+            /* Hide the floating legend when printing */
+            .floating-legend-container {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="menu-container">
+    <div class="header-section">
+        <h1>Passage to India</h1>
+        <div class="sub-header">Fine Dining & Authentic Cuisine</div>
+        <div class="disclaimer">
+            All menu items are free from Tree nuts, peanuts, Soy, fish, shellfish, egg, and sesame unless specifically mentioned.<br>
+            Vegan, Dairy-free, and Gluten-free options clearly marked. Please inform your server of allergies.<br>
+            Lunch portions served Mon-Fri until 3PM. Dinner portions served all day.
+        </div>
+        <p style="margin-top:10px; font-size: 0.7rem;"> Meal tax is 7%. An additional gratuity of 20% is added to large parties over 5 people.</p>
+
+    </div>
+
+    <div class="menu-grid">
+        
+        <div>
+            <h2>Soups</h2>
+            
+            <div class="menu-item">
+                <div class="item-header">
+                    <span class="item-name">Sweet Corn Soup</span>
+                    <span><span class="icon-key" title="Vegan">V</span> <span class="icon-key" title="Gluten Free">GF</span></span>
+                </div>
+                <div class="item-desc"> Corn broth made with carrots, sweet corn kernels, and mushroom simmered in a velvety corn starch, finished with a touch of black pepper. Garnished with fresh coriander. <br><strong>Available in: Vegetable (Mushroom) or Chicken.</strong></div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-header">
+                    <span class="item-name">Lemon Coriander Soup</span>
+                    <span><span class="icon-key" title="Vegan">V</span> <span class="icon-key" title="Gluten Free">GF</span></span>
+                </div>
+                <div class="item-desc"> Zesty vegetable broth infused with fresh lemon juice, chopped coriander leaves, carrots, cabbage, with a touch of ginger and garlic. <br><strong>Available in: Vegetable or Chicken.</strong></div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-header">
+                    <span class="item-name">Mulligatawny</span>
+                </div>
+                <div class="item-desc"> Hearty Anglo-Indian soup with lentils, and curry spices in a creamy, aromatic broth.</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-header">
+                    <span class="item-name">Coconut Soup</span>
+                    <span class="icon-key" title="Contains Coconut">C</span>
+                </div>
+                <div class="item-desc"> Creamy Coconut milk soup with mushrooms, lemongrass, ginger, and your choice of chicken or vegetables, finished with lime and herbs.</div>
+            </div>
+
+            <div class="menu-item">
+                <div class="item-header">
+                    <span class="item-name">Tomato Soup</span>
+                </div>
+                <div class="item-desc"> Smooth and creamy tomato purée simmered with fresh herbs, topped with a swirl of cream and served with crispy bread crunch. <br><strong>Available in: Vegetable or Chicken.</strong></div>
+            </div>
+
+            <h2>Appetizers</h2>
+            <div class="sub-header"> Served with Chutneys (Mint, Hot Onion and Tamarind)</div>
+
+            <div class="menu-item">
+                <span class="item-name">Papad</span> <span class="icon-key">V</span> <span class="icon-key">GF</span><br>
+                <span class="item-desc"> Thin, crisp lentil wafer, lightly roasted or fried, served with optional chutney.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Aloo Tikki</span><br>
+                <span class="item-desc"> Shallow-fried patties made from mashed potatoes, peas, cottage cheese cubes, coriander, cumin, and spices, coated in breadcrumbs.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Chicken Pakora</span> <span class="icon-key">GF</span><br>
+                <span class="item-desc"> Bite-sized chicken tender pieces marinated in spices, dipped in chickpea and wheat flour batter, deep-fried until crisp.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Vegetable Pakora</span> <span class="icon-key">V</span> <span class="icon-key">GF</span><br>
+                <span class="item-desc"> Mixed vegetables (onion, potato, cabbage, & cauliflower) coriander, cumin, and spices coated in chickpea and wheat flour batter, deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Paneer Pakora</span> <span class="icon-key">D</span> <span class="icon-key">GF</span><br>
+                <span class="item-desc"> Cubes of cottage cheese dipped in chickpea flour batter and deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Fish Pakora</span> <span class="icon-key">F</span> <span class="icon-key">GF</span><br>
+                <span class="item-desc"> Fish fillets marinated with spices, coated in chickpea and wheat flour batter, deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Shrimp Pakora</span> <span class="icon-key">S</span> <span class="icon-key">GF</span><br>
+                <span class="item-desc"> Shrimp marinated in spices, dipped in chickpea and wheat flour batter, deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Onion Samosa</span><br>
+                <span class="item-desc"> Triangular pastry stuffed with spiced onions and peas, wrapped in wheat flour dough, deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Vegetable Samosa</span><br>
+                <span class="item-desc"> Triangular pastry stuffed with spiced potatoes, peas, carrots, and coriander, wrapped in wheat flour dough, deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Chicken Samosa</span><br>
+                <span class="item-desc"> Triangular pastry filled with minced chicken, peas, onions, and spices, wrapped in wheat flour dough, deep-fried.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Passage Mixed Appetizers</span><br>
+                <span class="item-desc"> An assortment of starters including vegetable pakora, vegetable samosa, aloo tikki, panner pakora, chicken pakora, chicken samosas, fish pakora, and shrimp pakora.</span>
+            </div>
+
+            <div class="menu-item">
+                <span class="item-name">Vegetable Mixed Appetizers</span><br>
+                <span class="item-desc"> An assortment of starters including vegetable pakora, vegetable samosa, aloo tikki, and panner pakora.</span>
+            </div>
+
+            <h2>Salads</h2>
+            <div class="menu-item">
+                <span class="item-name">House Salad</span><br>
+                <span class="item-desc"> Mixed greens (lettuce, spinach, arugula), cherry tomatoes, cucumber, red onions, served with house dressing.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">House Salad With Grilled Chicken</span><br>
+                <span class="item-desc"> Mixed greens (lettuce, spinach, arugula), cherry tomatoes, cucumber, red onions, served with house dressing. Grilled marinated tender chicken, and house dressing.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Indian Salad</span><br>
+                <span class="item-desc"> Sliced mix of red onions and Spanish onions, green chilies, green pepper and lemon wedges, tossed with chaat masala.</span>
+            </div>
+
+            <h2>Side Orders</h2>
+             <div class="menu-item">
+                <span class="item-name">Chutney & Mixed Pickle</span><br>
+                <span class="item-desc"> Mango chutney or Mint chutney (contains) or Tamarind Chutney or Hot Onion Chutney or Mixed pickles.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Raita</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Yogurt-based relish with cucumber, carrot, roasted cumin, and fresh mint.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Tikka Masala Sauce</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Creamy tomato-based sauce with onions, garlic, ginger, and aromatic spices, finished with cream.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Korma Sauce</span> <span class="icon-key">D</span> <span class="icon-key">N</span> <span class="icon-key">C</span><br>
+                <span class="item-desc"> Rich sauce made with cream, cashews, coconut, onions, and mild spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Side Order of Basmati Rice</span><br>
+                <span class="item-desc"> Steamed long-grain aromatic basmati rice.</span>
+            </div>
+            
+            <h2>Rice Specialties</h2>
+            <div class="sub-header">Served with Raita on side</div>
+
+            <div class="menu-item">
+                <span class="item-name">Peas Pulao</span><br>
+                <span class="item-desc"> Basmati rice cooked with green peas, cumin seeds, onions, whole spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Nizami Biryani Chicken</span><br>
+                <span class="item-desc"> Fragrant basmati rice layered with marinated tender chicken, fried onions, fresh herbs, saffron, aromatic spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Nizami Biryani Lamb</span><br>
+                <span class="item-desc"> Basmati rice layered with marinated lamb, fried onions, herbs, saffron, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Vegetable Biryani</span><br>
+                <span class="item-desc"> Basmati rice cooked with assorted vegetables (carrots, beans, peas, potatoes), fried onions, herbs, saffron, biryani spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Shrimp Biryani</span> <span class="icon-key">S</span><br>
+                <span class="item-desc"> Aromatic basmati rice with marinated shrimp, fried onions, herbs, saffron, spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Goat Biryani</span><br>
+                <span class="item-desc"> Basmati rice layered with marinated goat meat, fried onions, herbs, saffron, biryani spices.</span>
+            </div>
+
+            <h2>Tandoori Specialties</h2>
+            <div class="sub-header"> Healthy - Served with Basmati Rice</div>
+
+            <div class="menu-item">
+                <span class="item-name">Paneer Tikka</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Cubes of paneer marinated in yogurt, spices, and herbs, skewered and roasted in a tandoor with bell peppers and onions.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Shish Kabob</span> <span class="icon-key">E</span><br>
+                <span class="item-desc"> Skewered chicken Tender grounded with special house seasoning, garlic, ginger spices, cilantro, egg, grilled with bell peppers and onions.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Kalmi Rebab</span><br>
+                <span class="item-desc"> Boneless Chicken tender marinated in yogurt, ginger-garlic paste, lemon juice, and spices, roasted in a tandoor with bell peppers and onions.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Tikka</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Boneless chicken tender pieces marinated in yogurt, spices, and lemon juice, skewered and roasted in a tandoor with bell peppers and onions.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Tandoori</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Bone-in chicken marinated in yogurt, lemon juice, and tandoori spices, roasted in a tandoor with bell peppers and onions.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Seekh Kabob</span> <span class="icon-key">E</span><br>
+                <span class="item-desc"> Ground lamb blended with onions, herbs, and spices, shaped onto skewers and grilled in a tandoor.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Shrimp Tandoori</span> <span class="icon-key">S</span><br>
+                <span class="item-desc"> Large shrimp marinated in yogurt, lemon juice, and tandoori spices, grilled in a tandoor.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Fish Tandoori</span> <span class="icon-key">F</span><br>
+                <span class="item-desc"> Fish fillets marinated in yogurt, lemon juice, and tandoori spices, grilled in a tandoor.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Tandoori Mixed Grill</span> <span class="icon-key">F</span> <span class="icon-key">E</span> <span class="icon-key">S</span><br>
+                <span class="item-desc"> Assorted tandoori meats including chicken tikka, lamb seekh kabob, shrimp tandoori, and fish tandoori, served with grilled vegetables.</span>
+            </div>
+
+             <h2>Vegetarian Delights</h2>
+            <div class="sub-header"> Served with Basmati Rice on Side</div>
+
+            <div class="menu-item">
+                <span class="item-name">Dal Tadka</span> <span class="icon-key">V</span><br>
+                <span class="item-desc"> Yellow lentils cooked with tomatoes, onions, garlic, ginger, and finished with a tempering of cumin, mustard seeds, and ghee.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Dal Maharani</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Slow-cooked black lentils and kidney beans in a creamy tomato sauce, finished with butter and cream.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Vegetable Korma</span> <span class="icon-key">N</span> <span class="icon-key">C</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Assorted vegetables (carrots, peas, beans, potatoes) simmered in a creamy cashew and coconut sauce with mild spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Vegetable Makhani</span> <span class="icon-key">N</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Mixed vegetables in a rich tomato-butter sauce with cream and mild spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Vegetable Curry</span> <span class="icon-key">V</span><br>
+                <span class="item-desc"> Seasonal vegetables cooked in a house curry sauce with onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Bhindi Masala</span> <span class="icon-key">V</span><br>
+                <span class="item-desc"> Okra sautéed with onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Aloo Palak</span><br>
+                <span class="item-desc"> Spinach and potatoes cooked with onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Aloo Gobi</span> <span class="icon-key">V</span><br>
+                <span class="item-desc"> Cauliflower and potatoes cooked with onions, peas, ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Aloo Mutter</span><br>
+                <span class="item-desc"> Potatoes and green peas cooked in a spiced onion-tomato gravy.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Channa Masala</span><br>
+                <span class="item-desc"> Chickpeas simmered in a tangy tomato-onion gravy with ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Paneer Butter Masala</span> <span class="icon-key">D</span> <span class="icon-key">N</span><br>
+                <span class="item-desc"> Paneer cubes in a rich tomato-butter gravy with creamy cashew paste and mild spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Palak Paneer</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Paneer cubes cooked with cream and spinach sauce with onions, tomatoes, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Mutter Paneer</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Paneer and green peas cooked in a spiced creamy onion-tomato gravy.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Shahi Paneer Korma</span> <span class="icon-key">N</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Paneer cubes in a royal korma sauce made with cream, cashews, and mild spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Malai Kofta</span> <span class="icon-key">N</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Vegetable and paneer dumplings in a creamy cashew-tomato sauce with mild spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Baingan Bharta</span> <span class="icon-key">V</span><br>
+                <span class="item-desc"> Smoked eggplant mashed and cooked with onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+        </div>
+
+        <div>
+            <h2>Indian Breads</h2>
+            <div class="sub-header"> Brushed with butter or served without butter on request</div>
+            
+            <div class="menu-item">
+                <span class="item-name">Naan</span><br>
+                <span class="item-desc"> Soft, leavened bread made from All-purpose flour, milk, and baked in a tandoor.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Onion Naan</span><br>
+                <span class="item-desc"> Classic naan stuffed with finely chopped onions.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Garlic Naan</span><br>
+                <span class="item-desc"> Naan topped with minced roasted garlic and fresh coriander.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Aloo Naan</span><br>
+                <span class="item-desc"> Naan filled with mashed spiced potatoes, cumin, coriander, and green chilies.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Onion Chilli Naan</span><br>
+                <span class="item-desc"> Naan stuffed with chopped onions, and green chilies.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Cheese Naan</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Naan filled with Indian Cottage cheese blend.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Kashmiri Naan</span> <span class="icon-key">N</span> <span class="icon-key">C</span><br>
+                <span class="item-desc"> Naan stuffed with a mix of chopped cashews nuts, raisins, and coconut.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Paratha</span><br>
+                <span class="item-desc"> Flaky, multi-layered whole wheat bread.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Aloo Paratha</span><br>
+                <span class="item-desc"> Whole wheat paratha stuffed with spiced mashed potatoes.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Tandoori Roti</span><br>
+                <span class="item-desc"> Whole wheat flatbread baked in a tandoor.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Bhatura</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Deep-fried, fluffy bread baked from refined wheat flour, yogurt, and a touch of baking powder.</span>
+            </div>
+
+            <h2>Chicken Specialties</h2>
+            <div class="sub-header">Served with Basmati Rice on Side</div>
+
+            <div class="menu-item">
+                <span class="item-name">Butter Chicken</span> <span class="icon-key">D</span> <span class="icon-key">N</span><br>
+                <span class="item-desc"> Tandoor-roasted chicken simmered in a creamy tomato-butter sauce with aromatic spices, and cashew paste.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Tikka Masala</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Marinated chicken tikka pieces cooked in a spiced tomato-onion gravy with cream and herbs.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Makhani</span> <span class="icon-key">N</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Boneless chicken pieces in a buttery tomato sauce with cream and spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Curry</span><br>
+                <span class="item-desc"> Chicken pieces cooked in a traditional onion-tomato curry sauce with ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Korma</span> <span class="icon-key">C</span> <span class="icon-key">N</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Chicken simmered in a creamy coconut sauce with mild spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Saag</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Chicken cooked in a creamy spinach sauce with onions, tomatoes, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chilli Chicken Masala</span> <span class="icon-key">Soy</span><br>
+                <span class="item-desc"> Indo-Chinese style chicken sautéed with bell peppers, onions, soy sauce, Tomato sauce, garlic, ginger, and green chilies.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Chicken Vindaloo</span><br>
+                <span class="item-desc"> Spicy Goan-style chicken curry with potatoes, vinegar, lemon juice and a blend of hot spices.</span>
+            </div>
+
+            <h2>Lamb Specialties</h2>
+            <div class="sub-header">Served with Basmati Rice on Side</div>
+
+            <div class="menu-item">
+                <span class="item-name">Lamb Bhuna</span><br>
+                <span class="item-desc"> Lamb pieces cooked in a thick, spiced onion-tomato reduction with ginger, garlic, and fresh coriander.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Curry</span><br>
+                <span class="item-desc"> Lamb simmered in a traditional onion-tomato curry sauce with ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Rogan Josh</span> <span class="icon-key">C</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Lamb cooked in a Kashmiri-style sauce (Coconut milk, minced Coconut) with yogurt, tomatoes, onions, and aromatic spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Korma</span> <span class="icon-key">N</span> <span class="icon-key">C</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Lamb simmered in a creamy cashew and Coconut sauce with mild spices and garnished with cashews and raisins.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Masala</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Lamb cooked in a robust creamy tomato-onion masala with ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Vindaloo</span><br>
+                <span class="item-desc"> Spicy Goan-style lamb curry with potatoes, vinegar, and hot spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Lamb Saag</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Lamb cooked in a creamy spinach sauce with onions, tomatoes, and spices.</span>
+            </div>
+
+            <h2>Goat Specialties</h2>
+            <div class="sub-header">Served with Basmati Rice on Side</div>
+
+            <div class="menu-item">
+                <span class="item-name">Goat Curry</span><br>
+                <span class="item-desc"> Bone-in goat pieces cooked in a house special curry sauce with onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Madras Goat</span><br>
+                <span class="item-desc"> Bone-in goat cooked in a spicy South Indian-style onion, potato and tomato curry with lemon juice.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Kashmiri Goat Curry</span> <span class="icon-key">C</span><br>
+                <span class="item-desc"> Goat meat cooked with Kashmiri-style sauce (Coconut milk, minced Coconut), onions, tomatoes, and fresh coriander.</span>
+            </div>
+
+            <h2>Seafood Specialties</h2>
+            <div class="sub-header">Served with Basmati Rice on Side</div>
+
+             <div class="menu-item">
+                <span class="item-name">Fish Curry</span> <span class="icon-key">F</span><br>
+                <span class="item-desc"> Fish fillets cooked in a house curry sauce with onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Fish Vindaloo</span> <span class="icon-key">F</span><br>
+                <span class="item-desc"> Fish fillets in a spicy Goan-style curry with potatoes, vinegar, and hot spices.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Goan Shrimp Curry</span> <span class="icon-key">S</span> <span class="icon-key">C</span><br>
+                <span class="item-desc"> Shrimp simmered in a Kashmiri-style sauce (Coconut milk, minced Coconut) with onions, tomatoes, ginger, garlic, and Goan spices.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Machli Masala</span> <span class="icon-key">F</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Fish fillets cooked in a spiced creamy tomato-onion masala with ginger, garlic, and fresh coriander.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Shrimp do Pyaaza</span> <span class="icon-key">S</span><br>
+                <span class="item-desc"> Shrimp cooked with double hot onions, tomatoes, ginger, garlic, and spices.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Shrimp Korma</span> <span class="icon-key">S</span> <span class="icon-key">C</span> <span class="icon-key">N</span><br>
+                <span class="item-desc"> Shrimp in a creamy coconut sauce with mild spices and garnished with cashews and raisins.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Shrimp Saag</span> <span class="icon-key">S</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Shrimp cooked in a creamy spinach sauce with onions, tomatoes, and spices.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Shrimp Tandoori Masala</span> <span class="icon-key">S</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Tandoor-grilled shrimp cooked in a creamy tomato-onion masala sauce with spices.</span>
+            </div>
+             <div class="menu-item">
+                <span class="item-name">Shrimp Vindaloo</span> <span class="icon-key">S</span><br>
+                <span class="item-desc"> Shrimp in a spicy Goan-style curry with potatoes, vinegar, and hot spices.</span>
+            </div>
+
+             <h2>Desserts</h2>
+             <div class="menu-item">
+                <span class="item-name">Badami Kheer</span> <span class="icon-key">D</span> <span class="icon-key">N</span><br>
+                <span class="item-desc"> Creamy rice pudding made with milk, basmati rice, sugar, cardamom, almonds, and pistachios.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Badam Pista Kulfi</span> <span class="icon-key">D</span> <span class="icon-key">N</span><br>
+                <span class="item-desc"> Traditional Indian frozen dessert made with milk, sugar, almonds, pistachios, and cardamom.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Gulab Jamun</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Warm milk-solid dumplings soaked in rose-scented sugar syrup.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Mango Kulfi</span> <span class="icon-key">D</span><br>
+                <span class="item-desc"> Frozen mango-flavored dessert made with milk, sugar, and mango pulp.</span>
+            </div>
+            <div class="menu-item">
+                <span class="item-name">Rasmalai</span> <span class="icon-key">D</span> <span class="icon-key">N</span><br>
+                <span class="item-desc"> Soft paneer cheese dumplings soaked in saffron-infused sweetened milk with pistachios and cardamom.</span>
+            </div>
+
+            
+        </div>
+    </div>
+
+
+</div>
+
+<div class="floating-legend-container">
+    <div class="floating-item"><span class="icon-key">V</span> Vegan</div>
+    <div class="floating-item"><span class="icon-key">GF</span> Gluten Free</div>
+    <div class="floating-item"><span class="icon-key">D</span> Dairy</div>
+    <div class="floating-item"><span class="icon-key">N</span> Tree Nut</div>
+    <div class="floating-item"><span class="icon-key">C</span> Coconut</div>
+    <div class="floating-item"><span class="icon-key">S</span> Shellfish</div>
+    <div class="floating-item"><span class="icon-key">E</span> Egg</div>
+    <div class="floating-item"><span class="icon-key">F</span> Fish</div>
+</div>
+
+</body>
+</html>
